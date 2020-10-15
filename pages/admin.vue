@@ -1,6 +1,14 @@
 <template>
   <div>
     <div style="font-size: 20px; text-align: center; margin-bottom: 30px; margin-top: 30px">クイズリスト</div>
+    <v-btn
+      color="red"
+      block
+      style="margin-bottom: 100px; color: white"
+      @click="reset"
+    >
+      リセット
+    </v-btn>
     <div v-for="item in questions">
       <v-btn
         color="primary"
@@ -26,6 +34,10 @@
       return {
         questions: questions
       }
+    }
+
+    reset() {
+      $firebase.changeQuestion("")
     }
 
     select(item: any) {

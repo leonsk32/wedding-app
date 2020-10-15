@@ -24,7 +24,7 @@
 export default {
   data () {
     return {
-      title: 'のりただ＆えみりクイズ'
+      title: 'Happy Wedding!!'
     }
   }
 }
