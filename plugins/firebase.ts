@@ -7,6 +7,34 @@ if (!firebase.apps.length) {
 }
 
 export const $firebase = {
+  onQuestionCreated: async (rounds: any[]) => {
+    await firebase
+      .firestore()
+      .collection('games/quiz/questions')
+      // .where('authorId', '==', userId)
+      .onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            rounds.push({
+              id: change.doc.id,
+              data: change.doc.data(),
+            })
+          } else if (change.type === 'removed') {
+          }
+        })
+      })
+  },
+
+  changeQuestion: async (id: string) => {
+    await firebase
+      .firestore()
+      .collection('games/quiz/current')
+      .doc('current')
+      .update({
+        id: id
+      })
+  },
+
   getQuestion: async (id: string) => {
     const docRef = await firebase
       .firestore()
