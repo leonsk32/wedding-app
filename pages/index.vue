@@ -3,9 +3,9 @@
     <div style="font-size: 20px; text-align: center; margin-bottom: 30px; margin-top: 30px">{{text}}</div>
     <div v-for="item in options">
       <v-btn
-        color="green"
+        color="primary"
         block
-        style="margin-bottom: 10px;"
+        style="margin-bottom: 10px; color: white"
       >{{item}}</v-btn>
     </div>
   </div>
