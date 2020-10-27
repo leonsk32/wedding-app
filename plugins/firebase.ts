@@ -7,7 +7,7 @@ if (!firebase.apps.length) {
 }
 
 export const $firebase = {
-  onQuestionCreated: async (rounds: any[]) => {
+  onQuestionCreated: async (callback: (data: DocumentData) => void) => {
     await firebase
       .firestore()
       .collection('games/quiz/questions')
@@ -15,10 +15,7 @@ export const $firebase = {
       .onSnapshot((snapshot) => {
         snapshot.docChanges().forEach((change) => {
           if (change.type === 'added') {
-            rounds.push({
-              id: change.doc.id,
-              data: change.doc.data(),
-            })
+            callback(change.doc)
           } else if (change.type === 'removed') {
           }
         })

@@ -28,12 +28,14 @@
   export default class extends Vue {
     private questions: any[] = []
 
-    async asyncData() {
-      const questions: any[] = []
-      await $firebase.onQuestionCreated(questions)
-      return {
-        questions: questions
-      }
+    async created() {
+      this.questions = []
+      await $firebase.onQuestionCreated(data => {
+        this.questions.push({
+          id: data.id,
+          data: data.data(),
+        })
+      })
     }
 
     async reset() {
