@@ -87,11 +87,11 @@ export const $firebase = {
   answer: async (questionId: string, userId: string, answer: number, point: number) => {
     await firebase
       .firestore()
-      .collection('games/quiz/questions')
-      .doc(questionId)
+      .collection('games/quiz/players')
+      .doc(userId)
       .collection('answers')
-      .add({
-        userId: userId,
+      .doc(questionId)
+      .set({
         answer: answer,
         point: point,
       })
