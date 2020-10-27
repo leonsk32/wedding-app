@@ -44,6 +44,7 @@
 
     selectQuestion(item: any) {
       $firebase.changeQuestion(item.id)
+      $firebase.changeStatus("answering")
     }
   }
 </script>
