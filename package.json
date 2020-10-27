@@ -7,7 +7,8 @@
     "build": "nuxt-ts build",
     "start": "nuxt-ts start",
     "generate": "nuxt-ts generate",
-    "test": "jest"
+    "test": "jest",
+    "deploy:production": "serverless deploy --stage production"
   },
   "dependencies": {
     "@nuxt/typescript-runtime": "^2.0.0",
@@ -27,6 +28,8 @@
     "babel-jest": "^26.5.0",
     "jest": "^26.5.0",
     "ts-jest": "^26.4.1",
-    "vue-jest": "^3.0.4"
+    "vue-jest": "^3.0.4",
+    "serverless": "^1.74.1",
+    "serverless-s3-sync": "^1.14.4"
   }
 }

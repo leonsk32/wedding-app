@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: wedding-app basic auth
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    AllowedValues:
+      - production
+
+Mappings:
+  Env:
+    production:
+      BasicAuthUserName: <replace me>
+      BasicAuthPassword: <replace me>
+    common:
+      ServiceName: wedding-app-basic-auth
+
+Resources:
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        !Sub
+        - ${ServiceNameFromMap}-${EnvironmentName}-lambda-role
+        - ServiceNameFromMap: !FindInMap [Env, common, ServiceName]
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - edgelambda.amazonaws.com
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName:
+            !Sub
+            - ${ServiceNameFromMap}-${EnvironmentName}-lambda-role-policy
+            - ServiceNameFromMap: !FindInMap [Env, common, ServiceName]
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: arn:aws:logs:*:*:*
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        !Sub
+        - ${ServiceNameFromMap}-${EnvironmentName}-basic-auth
+        - ServiceNameFromMap: !FindInMap [Env, common, ServiceName]
+      Runtime: nodejs12.x
+      Role: !GetAtt LambdaRole.Arn
+      Handler: index.handler
+      MemorySize: 128
+      Timeout: 5
+      Code:
+        ZipFile:
+          !Sub
+          - |
+            'use strict';
+            exports.handler = (event, context, callback) => {
+                // Get request and request headers
+                const request = event.Records[0].cf.request;
+                const headers = request.headers;
+                // Configure authentication
+                const authUser = '${BasicAuthUserNameFromMap}';
+                const authPass = '${BasicAuthPasswordFromMap}';
+                // Construct the Basic Auth string
+                const authString = 'Basic ' + new Buffer(authUser + ':' + authPass).toString('base64');
+                // Require Basic authentication
+                if (typeof headers.authorization == 'undefined' || headers.authorization[0].value != authString) {
+                    const body = 'Unauthorized';
+                    const response = {
+                        status: '401',
+                        statusDescription: 'Unauthorized',
+                        body: body,
+                        headers: {
+                            'www-authenticate': [{key: 'WWW-Authenticate', value:'Basic'}]
+                        },
+                    };
+                    callback(null, response);
+                }
+                // Continue request processing if authentication passed
+                callback(null, request);
+            };
+          - BasicAuthUserNameFromMap: !FindInMap [Env, !Ref EnvironmentName, BasicAuthUserName]
+            BasicAuthPasswordFromMap: !FindInMap [Env, !Ref EnvironmentName, BasicAuthPassword]
+      Description: Lambda function for basic auth.
+  LambdaFunctionVersion:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName: !Ref LambdaFunction
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    DependsOn:
+      - LambdaFunction
+    Properties:
+      RetentionInDays: 1
+      LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+
+Outputs:
+  LambdaFunctionArn:
+    Value: !Join [':', [!GetAtt LambdaFunction.Arn, !GetAtt LambdaFunctionVersion.Version]]
