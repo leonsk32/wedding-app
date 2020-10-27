@@ -36,8 +36,9 @@
       }
     }
 
-    reset() {
-      $firebase.changeQuestion("first")
+    async reset() {
+      await $firebase.clearPlayers()
+      await $firebase.changeQuestion("first")
     }
 
     select(item: any) {

@@ -35,6 +35,21 @@ export const $firebase = {
       })
   },
 
+  clearPlayers: async () => {
+    const snapshot = await firebase
+      .firestore()
+      .collection('games/quiz/players')
+      .get()
+    const playerIds = snapshot.docs.map(doc => doc.id)
+
+    for (const id of playerIds) {
+      await firebase.firestore()
+        .collection('games/quiz/players')
+        .doc(id)
+        .delete()
+    }
+  },
+
   getQuestion: async (id: string) => {
     const docRef = await firebase
       .firestore()
