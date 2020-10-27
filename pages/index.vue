@@ -20,6 +20,10 @@
         >{{item}}</v-btn>
       </div>
     </div>
+    <div style="text-align: center; font-size: 20px" v-if="status === 'answered'">
+      <div style="font-size: 20px; text-align: center; margin-bottom: 30px; margin-top: 30px">{{text}}</div>
+      <div>あなたの回答は<br>{{yourAnswer}}<br>です</div>
+    </div>
   </div>
 </template>
 
@@ -35,6 +39,7 @@
     private name = ""
     private userId = ""
     private options = []
+    private yourAnswer = ""
     private answer = -1
 
     async created() {
@@ -66,6 +71,9 @@
         index,
         this.answer === index ? 1 : 0
       )
+
+      this.yourAnswer = this.options[index]
+      this.status = 'answered'
     }
   }
 </script>
