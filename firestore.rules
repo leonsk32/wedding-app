@@ -10,7 +10,15 @@ service cloud.firestore {
         allow write: if true;
         allow read: if true;
       }
-      match /players/{document=**} {
+      match /rounds/{document=**} {
+        allow write: if true;
+        allow read: if true;
+      }
+      match /rounds/{round}/players/{document=**} {
+        allow write: if true;
+        allow read: if true;
+      }
+      match /rounds/{round}/players/{player}/answers/{document=**} {
         allow write: if true;
         allow read: if true;
       }

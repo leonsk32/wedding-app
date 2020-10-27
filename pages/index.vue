@@ -33,24 +33,29 @@
 
   @Component({components: {}})
   export default class extends Vue {
-    private status = "input-name"
-    private questionId = ""
+    private status = ""
+    private currentRoundId = ""
+    private currentQuestionId = ""
     private text = ""
     private name = ""
-    private userId = ""
+    private playerId = ""
     private options = []
     private yourAnswer = ""
     private answer = -1
 
     async created() {
+      await $firebase.onRoundChanged(async (data) => {
+        this.currentRoundId = data.id
+      })
+
       await $firebase.onQuestionChanged(async (data) => {
-        this.questionId = data.id
-        if (this.questionId === "first") {
+        this.currentQuestionId = data.id
+        if (this.currentQuestionId === "first") {
           this.status = "input-name"
           return
         }
 
-        const question: any = await $firebase.getQuestion(this.questionId)
+        const question: any = await $firebase.getQuestion(this.currentQuestionId)
         this.text = question.text
         this.options = []
         this.options = question.options
@@ -60,14 +65,15 @@
     }
 
     async createPlayer() {
-      this.userId = await $firebase.createPlayer(this.name)
+      this.playerId = await $firebase.createPlayer(this.currentRoundId, this.name)
       this.status = 'waiting'
     }
 
     async submitAnswer(index: number) {
       await $firebase.answer(
-        this.questionId,
-        this.userId,
+        this.currentRoundId,
+        this.currentQuestionId,
+        this.playerId,
         index,
         this.answer === index ? 1 : 0
       )

@@ -37,7 +37,7 @@
     }
 
     async reset() {
-      await $firebase.clearPlayers()
+      await $firebase.createRound()
       await $firebase.changeQuestion("first")
     }
 

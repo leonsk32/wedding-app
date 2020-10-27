@@ -29,25 +29,22 @@ export const $firebase = {
     await firebase
       .firestore()
       .collection('games/quiz/admin')
-      .doc('current')
-      .update({
+      .doc('currentQuestion')
+      .set({
         id: id
       })
   },
 
-  clearPlayers: async () => {
-    const snapshot = await firebase
-      .firestore()
-      .collection('games/quiz/players')
-      .get()
-    const playerIds = snapshot.docs.map(doc => doc.id)
+  createRound: async () => {
+    const docRef = await firebase.firestore().collection('games/quiz/rounds').add({})
 
-    for (const id of playerIds) {
-      await firebase.firestore()
-        .collection('games/quiz/players')
-        .doc(id)
-        .delete()
-    }
+    await firebase
+      .firestore()
+      .collection('games/quiz/admin')
+      .doc('currentRound')
+      .set({
+        id: docRef.id
+      })
   },
 
   getQuestion: async (id: string) => {
@@ -62,10 +59,10 @@ export const $firebase = {
       if (doc.exists) {
         return doc.data()
       } else {
-        console.log('No round found!')
+        console.log('No question found!')
       }
     } catch (e) {
-      console.log('Error getting round info: ' + e)
+      console.log('Error getting question: ' + e)
     }
   },
 
@@ -73,22 +70,39 @@ export const $firebase = {
     await firebase
       .firestore()
       .collection('games/quiz/admin')
-      .doc('current')
+      .doc('currentQuestion')
       .onSnapshot((doc) => {
         callback(doc.data()!)
       })
   },
 
-  createPlayer: async (name: string) => {
-    const docRef = await firebase.firestore().collection('games/quiz/players').add({name: name})
+  onRoundChanged: async (callback: (data: DocumentData) => Promise<void>) => {
+    await firebase
+      .firestore()
+      .collection('games/quiz/admin')
+      .doc('currentRound')
+      .onSnapshot((doc) => {
+        callback(doc.data()!)
+      })
+  },
+
+  createPlayer: async (roundId: string, name: string) => {
+    const docRef = await firebase.firestore()
+      .collection('games/quiz/rounds')
+      .doc(roundId)
+      .collection('players')
+      .add({name: name})
+
     return docRef.id
   },
 
-  answer: async (questionId: string, userId: string, answer: number, point: number) => {
+  answer: async (roundId: string, questionId: string, playerId: string, answer: number, point: number) => {
     await firebase
       .firestore()
-      .collection('games/quiz/players')
-      .doc(userId)
+      .collection('games/quiz/rounds')
+      .doc(roundId)
+      .collection('players')
+      .doc(playerId)
       .collection('answers')
       .doc(questionId)
       .set({
