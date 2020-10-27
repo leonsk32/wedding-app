@@ -96,8 +96,8 @@
     }
 
     async selectQuestion(item: any) {
-      await $firebase.changeQuestion(item.id)
       await $firebase.changeStatus("answering")
+      await $firebase.changeQuestion(item.id)
     }
   }
 </script>

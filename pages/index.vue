@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="currentStatus === 'input-name'">
+    <div v-if="currentStatus === 'input-name' || !isPlayerInfoSet">
       <div v-if="isPlayerInfoSet">
         <div style="text-align: center; font-size: 20px">
           {{name}}さん<br>クイズが始まるまでお待ち下さい！
@@ -13,7 +13,7 @@
         <v-btn block color="primary" @click="createPlayer" :disabled="name === ''">決定</v-btn>
       </div>
     </div>
-    <div v-if="currentStatus === 'answering'">
+    <div v-if="currentStatus === 'answering' && isPlayerInfoSet">
       <div style="font-size: 20px; text-align: center; margin-bottom: 30px; margin-top: 30px">{{text}}</div>
       <div v-if="alreadyAnswered">
         <div style="font-size: 20px; text-align: center; margin-bottom: 30px; margin-top: 30px">
@@ -31,7 +31,7 @@
         </div>
       </div>
     </div>
-    <div v-if="currentStatus === 'show-answer'">
+    <div v-if="currentStatus === 'show-answer' && isPlayerInfoSet">
       <div style="font-size: 20px; text-align: center; margin-bottom: 30px; margin-top: 30px">{{text}}</div>
       <div>
         <div style="font-size: 20px; text-align: center; margin-bottom: 30px; margin-top: 30px">
