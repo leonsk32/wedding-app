@@ -92,7 +92,7 @@
     async reset() {
       await $firebase.createRound()
       await $firebase.changeStatus("input-name")
-      await $firebase.changeQuestion("first")
+      await $firebase.changeQuestion("")
     }
 
     async selectQuestion(item: any) {

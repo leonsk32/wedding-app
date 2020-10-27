@@ -71,6 +71,11 @@
         this.currentStatus = data.currentStatus
         this.currentRoundId = data.currentRoundId
 
+        if (this.currentStatus === 'input-name') {
+          this.playerId = ""
+          this.name = ""
+        }
+
         if (this.currentQuestionId !== data.currentQuestionId) {
           this.currentQuestionId = data.currentQuestionId
 
@@ -79,9 +84,8 @@
           this.options = []
           this.options = question.options
           this.answer = question.answer
+          this.yourAnswer = ""
         }
-
-        this.yourAnswer = ""
       })
     }
 
