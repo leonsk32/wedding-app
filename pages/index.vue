@@ -74,6 +74,7 @@
         this.currentRoundId,
         this.currentQuestionId,
         this.playerId,
+        this.name,
         index,
         this.answer === index ? 1 : 0
       )

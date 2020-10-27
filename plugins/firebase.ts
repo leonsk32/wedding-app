@@ -96,7 +96,7 @@ export const $firebase = {
     return docRef.id
   },
 
-  submitAnswer: async (roundId: string, questionId: string, playerId: string, answer: number, point: number) => {
+  submitAnswer: async (roundId: string, questionId: string, playerId: string, playerName: string, answer: number, point: number) => {
     await firebase
       .firestore()
       .collection('games/quiz/rounds')
@@ -105,21 +105,20 @@ export const $firebase = {
         answers: firebase.firestore.FieldValue.arrayUnion({
           questionId: questionId,
           playerId: playerId,
+          playerName: playerName,
           submitAnswer: answer,
           point: point,
         })
       })
   },
 
-  getAllPlayersAndAnswers: async (roundId: string) => {
-    console.log(roundId)
-
-    const newVar = await firebase
+  getAllAnswers: async (roundId: string) => {
+    const answers = await firebase
       .firestore()
       .collection('games/quiz/rounds')
       .doc(roundId)
       .get()
 
-    console.log(newVar.data())
+    return answers.data()
   }
 }
