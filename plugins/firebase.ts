@@ -96,18 +96,30 @@ export const $firebase = {
     return docRef.id
   },
 
-  answer: async (roundId: string, questionId: string, playerId: string, answer: number, point: number) => {
+  submitAnswer: async (roundId: string, questionId: string, playerId: string, answer: number, point: number) => {
     await firebase
       .firestore()
       .collection('games/quiz/rounds')
       .doc(roundId)
-      .collection('players')
-      .doc(playerId)
-      .collection('answers')
-      .doc(questionId)
-      .set({
-        answer: answer,
-        point: point,
+      .update({
+        answers: firebase.firestore.FieldValue.arrayUnion({
+          questionId: questionId,
+          playerId: playerId,
+          submitAnswer: answer,
+          point: point,
+        })
       })
   },
+
+  getAllPlayersAndAnswers: async (roundId: string) => {
+    console.log(roundId)
+
+    const newVar = await firebase
+      .firestore()
+      .collection('games/quiz/rounds')
+      .doc(roundId)
+      .get()
+
+    console.log(newVar.data())
+  }
 }

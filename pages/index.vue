@@ -70,7 +70,7 @@
     }
 
     async submitAnswer(index: number) {
-      await $firebase.answer(
+      await $firebase.submitAnswer(
         this.currentRoundId,
         this.currentQuestionId,
         this.playerId,
