@@ -17,6 +17,25 @@
     >
       リセット
     </v-btn>
+    <v-dialog
+      v-model="showAnswerDialog"
+      max-width="432"
+      persistent
+      overlay-opacity="0"
+    >
+      <v-card>
+        <v-card-title>{{currentText}}</v-card-title>
+        <v-card-actions>
+          <v-btn
+            color="primary"
+            block
+            style="color: white"
+            @click="showAnswer()"
+          >回答を表示する</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -26,6 +45,13 @@
 
   @Component({components: {}})
   export default class extends Vue {
+    // current
+    private currentStatus = ""
+    private currentRoundId = ""
+    private currentQuestionId = ""
+    private showAnswerDialog = false
+
+    // questions
     private questions: any[] = []
 
     async created() {
@@ -36,6 +62,31 @@
           data: data.data(),
         })
       })
+
+      await $firebase.onCurrentChanged(async (data) => {
+        this.currentStatus = data.currentStatus
+        this.currentRoundId = data.currentRoundId
+        this.currentQuestionId = data.currentQuestionId
+
+        this.showAnswerDialog = this.currentStatus === 'answering'
+      })
+    }
+
+    get currentText() {
+      let find = this.questions.find(q => {
+        return q.id === this.currentQuestionId
+      })
+
+      if (!find) {
+        return ""
+      }
+
+      console.log(find)
+      return find.data.text
+    }
+
+    async showAnswer() {
+      await $firebase.changeStatus("show-answer")
     }
 
     async reset() {
@@ -44,9 +95,9 @@
       await $firebase.changeQuestion("first")
     }
 
-    selectQuestion(item: any) {
-      $firebase.changeQuestion(item.id)
-      $firebase.changeStatus("answering")
+    async selectQuestion(item: any) {
+      await $firebase.changeQuestion(item.id)
+      await $firebase.changeStatus("answering")
     }
   }
 </script>

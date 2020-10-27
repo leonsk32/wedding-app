@@ -31,6 +31,17 @@
         </div>
       </div>
     </div>
+    <div v-if="currentStatus === 'show-answer'">
+      <div style="font-size: 20px; text-align: center; margin-bottom: 30px; margin-top: 30px">{{text}}</div>
+      <div>
+        <div style="font-size: 20px; text-align: center; margin-bottom: 30px; margin-top: 30px">
+          <div>あなたの回答は<br>{{yourAnswer}}<br>です</div>
+        </div>
+        <div style="font-size: 20px; text-align: center; margin-bottom: 30px; margin-top: 30px">
+          <div>正解は<br>{{options[answer]}}<br>です</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
