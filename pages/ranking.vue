@@ -44,8 +44,12 @@
     private rankingArray: any[] = []
 
     async created() {
-      await $firebase.onRoundChanged(async (data) => {
-        this.currentRoundId = data.id
+      await $firebase.onCurrentChanged(async (data) => {
+        if (this.currentRoundId === data.currentRoundId) {
+          return
+        }
+        this.currentRoundId = data.currentRoundId
+
         await $firebase.onRoundUpdated(this.currentRoundId, async (data) => {
           const answers = data.answers ? data.answers as any[] : []
           this.rankingArray = []

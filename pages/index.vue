@@ -44,12 +44,10 @@
     private answer = -1
 
     async created() {
-      await $firebase.onRoundChanged(async (data) => {
-        this.currentRoundId = data.id
-      })
+      await $firebase.onCurrentChanged(async (data) => {
+        this.currentRoundId = data.currentRoundId
+        this.currentQuestionId = data.currentQuestionId
 
-      await $firebase.onQuestionChanged(async (data) => {
-        this.currentQuestionId = data.id
         if (this.currentQuestionId === "first") {
           this.status = "input-name"
           return

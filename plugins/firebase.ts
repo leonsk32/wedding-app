@@ -29,9 +29,19 @@ export const $firebase = {
     await firebase
       .firestore()
       .collection('games/quiz/admin')
-      .doc('currentQuestion')
-      .set({
-        id: id
+      .doc('current')
+      .update({
+        currentQuestionId: id
+      })
+  },
+
+  changeStatus: async (status: string) => {
+    await firebase
+      .firestore()
+      .collection('games/quiz/admin')
+      .doc('current')
+      .update({
+        currentStatus: status
       })
   },
 
@@ -41,9 +51,9 @@ export const $firebase = {
     await firebase
       .firestore()
       .collection('games/quiz/admin')
-      .doc('currentRound')
-      .set({
-        id: docRef.id
+      .doc('current')
+      .update({
+        currentRoundId: docRef.id
       })
   },
 
@@ -66,21 +76,11 @@ export const $firebase = {
     }
   },
 
-  onQuestionChanged: async (callback: (data: DocumentData) => Promise<void>) => {
+  onCurrentChanged: async (callback: (data: DocumentData) => Promise<void>) => {
     await firebase
       .firestore()
       .collection('games/quiz/admin')
-      .doc('currentQuestion')
-      .onSnapshot((doc) => {
-        callback(doc.data()!)
-      })
-  },
-
-  onRoundChanged: async (callback: (data: DocumentData) => Promise<void>) => {
-    await firebase
-      .firestore()
-      .collection('games/quiz/admin')
-      .doc('currentRound')
+      .doc('current')
       .onSnapshot((doc) => {
         callback(doc.data()!)
       })
@@ -121,14 +121,4 @@ export const $firebase = {
         callback(doc.data()!)
       })
   },
-
-  getAllAnswers: async (roundId: string) => {
-    const answers = await firebase
-      .firestore()
-      .collection('games/quiz/rounds')
-      .doc(roundId)
-      .get()
-
-    return answers.data()
-  }
 }
