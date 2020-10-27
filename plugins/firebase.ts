@@ -112,6 +112,16 @@ export const $firebase = {
       })
   },
 
+  onRoundUpdated: async (roundId: string, callback: (data: DocumentData) => Promise<void>) => {
+    await firebase
+      .firestore()
+      .collection('games/quiz/rounds')
+      .doc(roundId)
+      .onSnapshot((doc) => {
+        callback(doc.data()!)
+      })
+  },
+
   getAllAnswers: async (roundId: string) => {
     const answers = await firebase
       .firestore()

@@ -43,30 +43,30 @@
     ]
     private rankingArray: any[] = []
 
-
     async created() {
       await $firebase.onRoundChanged(async (data) => {
         this.currentRoundId = data.id
-        const answersData = await $firebase.getAllAnswers(this.currentRoundId)
-        const answers = answersData ? answersData.answers as any[] : []
-        this.rankingArray = []
+        await $firebase.onRoundUpdated(this.currentRoundId, async (data) => {
+          const answers = data.answers ? data.answers as any[] : []
+          this.rankingArray = []
 
-        answers.forEach(answer => {
-          const existing = this.rankingArray.find(r => r.playerId === answer.playerId)
-          if (!!existing) {
-            existing.score += answer.point
-          } else {
-            this.rankingArray.push({
-              playerId: answer.playerId,
-              playerName: answer.playerName,
-              score: answer.point,
-            })
-          }
+          answers.forEach(answer => {
+            const existing = this.rankingArray.find(r => r.playerId === answer.playerId)
+            if (!!existing) {
+              existing.score += answer.point
+            } else {
+              this.rankingArray.push({
+                playerId: answer.playerId,
+                playerName: answer.playerName,
+                score: answer.point,
+              })
+            }
+          })
+
+          this.rankingArray.sort((a, b) => a.score - b.score)
+
+          console.log(this.rankingArray)
         })
-
-        this.rankingArray.sort((a, b) => a.score - b.score)
-
-        console.log(this.rankingArray)
       })
     }
   }
