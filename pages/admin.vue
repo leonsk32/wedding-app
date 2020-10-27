@@ -37,7 +37,7 @@
     }
 
     reset() {
-      $firebase.changeQuestion("")
+      $firebase.changeQuestion("first")
     }
 
     select(item: any) {

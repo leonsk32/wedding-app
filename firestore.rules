@@ -6,7 +6,11 @@ service cloud.firestore {
         allow write: if true;
         allow read: if true;
       }
-      match /current/{document=**} {
+      match /admin/{document=**} {
+        allow write: if true;
+        allow read: if true;
+      }
+      match /players/{document=**} {
         allow write: if true;
         allow read: if true;
       }

@@ -28,7 +28,7 @@ export const $firebase = {
   changeQuestion: async (id: string) => {
     await firebase
       .firestore()
-      .collection('games/quiz/current')
+      .collection('games/quiz/admin')
       .doc('current')
       .update({
         id: id
@@ -57,10 +57,28 @@ export const $firebase = {
   onQuestionChanged: async (callback: (data: DocumentData) => Promise<void>) => {
     await firebase
       .firestore()
-      .collection('games/quiz/current')
+      .collection('games/quiz/admin')
       .doc('current')
       .onSnapshot((doc) => {
         callback(doc.data()!)
       })
-  }
+  },
+
+  createPlayer: async (name: string) => {
+    const docRef = await firebase.firestore().collection('games/quiz/players').add({name: name})
+    return docRef.id
+  },
+
+  answer: async (questionId: string, userId: string, answer: number, point: number) => {
+    await firebase
+      .firestore()
+      .collection('games/quiz/questions')
+      .doc(questionId)
+      .collection('answers')
+      .add({
+        userId: userId,
+        answer: answer,
+        point: point,
+      })
+  },
 }
